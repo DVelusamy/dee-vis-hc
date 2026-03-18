@@ -1,5 +1,5 @@
 # ---- builder stage ----
-FROM python:3.9-slim AS builder
+FROM python:3.10-slim AS builder
 
 WORKDIR /build
 
@@ -18,7 +18,7 @@ RUN find /install -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null; \
     true
 
 # ---- final stage ----
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
