@@ -16,7 +16,10 @@ import pandas as pd
 
 from src.core.registry import ModelSpec
 from src.core import loaders
-from src.core.marian_translator import MarianTranslator
+try:
+    from src.core.marian_translator import MarianTranslator
+except Exception:
+    MarianTranslator = None
 from src.core.cnn_xray_model import XrayMultiLabelClassifier
 
 
@@ -1120,6 +1123,8 @@ def predict(
             return str(text), {"provider": "noop", "source_lang": source_lang, "target_lang": target_lang}
 
         if kind == "hf_translation":
+            if MarianTranslator is None:
+                return "", {"error": "MarianTranslator unavailable (transformers not installed)"}
             translator = MarianTranslator(_resolve_artifact_path(spec.model_path))
             out = translator.translate(
                 text=str(text),
