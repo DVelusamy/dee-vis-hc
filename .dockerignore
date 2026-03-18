@@ -17,3 +17,8 @@ node_modules
 *.log
 .idea
 .vscode
+notebooks
+report
+Report.pdf.pages
+*.ipynb
+*.zip
