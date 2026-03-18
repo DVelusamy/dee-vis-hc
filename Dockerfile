@@ -1,17 +1,21 @@
-# Use the official Python image
 FROM python:3.9-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the application code into the container
-COPY . /app
-
-# Install dependencies
+# Install dependencies first for better layer caching
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the port Streamlit runs on (default: 8501)
+# Copy application code
+COPY . .
+
+# Make start script executable
+RUN chmod +x start.sh
+
+# Default API_BASE for in-container communication
+ENV API_BASE=http://localhost:8000
+
+# Expose Streamlit port (Railway serves one port)
 EXPOSE 8501
 
-# Command to run the Streamlit app
-CMD ["streamlit", "run", "Pattern Association.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["./start.sh"]

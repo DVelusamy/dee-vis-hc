@@ -16,7 +16,7 @@ ok, models, analyst_mode = app_shell(
 if not ok:
     st.stop()
 
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
+API_BASE_URL = os.environ.get("API_BASE", "http://localhost:8000")
 
 uploaded_file = st.file_uploader(
     "Upload an X-ray image",
