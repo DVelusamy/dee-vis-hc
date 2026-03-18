@@ -10,9 +10,8 @@ RUN pip install --no-cache-dir --prefix=/install torch --index-url https://downl
 COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
-# Strip .dist-info, __pycache__, tests, and pip metadata to save space
+# Strip __pycache__, *.pyc, and test dirs to save space (keep .dist-info!)
 RUN find /install -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null; \
-    find /install -type d -name "*.dist-info" -exec rm -rf {} + 2>/dev/null; \
     find /install -type d -name "tests" -exec rm -rf {} + 2>/dev/null; \
     find /install -type d -name "test" -exec rm -rf {} + 2>/dev/null; \
     find /install -name "*.pyc" -delete 2>/dev/null; \
