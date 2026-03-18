@@ -1,13 +1,30 @@
+# ---- builder stage ----
+FROM python:3.9-slim AS builder
+
+WORKDIR /build
+
+# Install CPU-only PyTorch first (saves ~2GB vs CUDA version)
+RUN pip install --no-cache-dir --prefix=/install torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# Strip .dist-info, __pycache__, tests, and pip metadata to save space
+RUN find /install -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null; \
+    find /install -type d -name "*.dist-info" -exec rm -rf {} + 2>/dev/null; \
+    find /install -type d -name "tests" -exec rm -rf {} + 2>/dev/null; \
+    find /install -type d -name "test" -exec rm -rf {} + 2>/dev/null; \
+    find /install -name "*.pyc" -delete 2>/dev/null; \
+    true
+
+# ---- final stage ----
 FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install CPU-only PyTorch first (saves ~2GB vs CUDA version)
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
-
-# Install remaining dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy only the installed packages from builder
+COPY --from=builder /install /usr/local
 
 # Copy application code
 COPY . .

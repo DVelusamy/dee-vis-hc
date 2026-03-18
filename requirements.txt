@@ -19,7 +19,6 @@ pillow
 transformers
 sentencepiece
 sacremoses
-sentence-transformers
 nltk
 
 mlxtend
